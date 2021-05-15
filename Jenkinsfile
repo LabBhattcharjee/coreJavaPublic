@@ -1,6 +1,6 @@
 node {
   stage('SC checkout'){
-    git 'https://github.com/LabBhattcharjee/coreJavaPublic/tree/main/weather-service'
+    git 'https://github.com/LabBhattcharjee/coreJavaPublic'
   } 
   
   stage('build install'){
