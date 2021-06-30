@@ -5,13 +5,25 @@ package com.example.demo.controller;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.UUID;
 
+import javax.annotation.PostConstruct;
 import javax.validation.Valid;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.cassandra.core.CassandraTemplate;
+import org.springframework.data.cassandra.core.mapping.BasicMapId;
+import org.springframework.data.cassandra.core.mapping.MapId;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.datastax.oss.driver.api.core.uuid.Uuids;
+import com.example.demo.model.Book;
+import com.example.demo.repository.BookRepository;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.ImmutableSet;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -27,6 +39,37 @@ public class MyController {
 	private String fromEnv;
 	@Value("${toBeOverriden}")
 	private String toBeOverriden;
+
+	@Autowired
+	private BookRepository bookRepository;
+
+	@Autowired
+	private CassandraTemplate cassandraTemplate;
+
+	@PostConstruct
+	public void init() {
+		// https://www.baeldung.com/spring-data-cassandra-tutorial
+		final UUID timeBased = Uuids.timeBased();
+		final Book javaBook = new Book(timeBased, "Head First Java", "O'Reilly Media",
+				ImmutableSet.of("Computer", "Software"));
+		bookRepository.saveAll(ImmutableSet.of(javaBook));
+		bookRepository.findAll().stream().forEach(System.out::println);
+
+		final Iterable<Book> findByTitleAndPublisher = bookRepository.findByTitleAndPublisher("Head First Java",
+				"O'Reilly Media");
+		findByTitleAndPublisher.forEach(System.out::println);
+
+		System.out.println("MyController.init():" + cassandraTemplate.insert(javaBook));
+
+		final MapId mapId = new BasicMapId(
+				ImmutableMap.of("id", timeBased, "title", "Head First Java", "publisher", "O'Reilly Media"));
+
+		System.out.println(cassandraTemplate.exists(mapId, Book.class));
+		
+//		PrimaryKeyClass mapId2;
+		
+
+	}
 
 	@Data
 	@AllArgsConstructor

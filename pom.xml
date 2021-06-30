@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.4.5</version>
+		<version>LATEST</version>  <!-- 2.4.5 -->
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
@@ -19,6 +19,12 @@
 		<docker.image.prefix>prefix</docker.image.prefix>
 		<docker.image.name>springboot-docker</docker.image.name>
 		<jib-maven-plugin.version>2.5.0</jib-maven-plugin.version>
+
+		<!-- Cassandra -->
+		<cassandra-driver-core.version>[3.7.2,)</cassandra-driver-core.version>
+		<cassandra-unit.version>[3.1.1.0,)</cassandra-unit.version>
+		<datastax-cassandra.version>[4.1.0,)</datastax-cassandra.version>
+
 	</properties>
 	<dependencies>
 		<dependency>
@@ -38,12 +44,62 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+		
+		 <dependency>
+            <groupId>org.springframework.data</groupId>
+            <artifactId>spring-data-cassandra</artifactId>
+            </dependency>
+        
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>com.tinkerpop.gremlin</groupId>
+			<artifactId>gremlin-java</artifactId>
+			<version>[2.5.0,)</version>
+		</dependency>
+		<!-- Cassandra -->
+		<!-- <dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-core</artifactId>
+			<version>[3.7.2,)</version>
+		</dependency> -->
+		<dependency>
+			<groupId>com.datastax.cassandra</groupId>
+			<artifactId>cassandra-driver-core</artifactId>
+			<version>${cassandra-driver-core.version}</version>
+			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>com.google.guava</groupId>
+					<artifactId>guava</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.cassandraunit/cassandra-unit -->
+		<dependency>
+			<groupId>org.cassandraunit</groupId>
+			<artifactId>cassandra-unit</artifactId>
+			<version>${cassandra-unit.version}</version>
+		</dependency>
+
+
+		<!-- DataStax Cassandra -->
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-core</artifactId>
+			<!-- <version>${datastax-cassandra.version}</version> -->
+		</dependency>
+		<dependency>
+			<groupId>com.datastax.oss</groupId>
+			<artifactId>java-driver-query-builder</artifactId>
+			<!-- <version>${datastax-cassandra.version}</version> -->
+		</dependency>
+
 
 		<!-- https://mkyong.com/spring-boot/spring-boot-log4j-2-example/ -->
 		<dependency>
@@ -122,14 +178,14 @@
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
-			<version>[4.4.0,)</version>
+			<!-- <version>[4.4.0,)</version> -->
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>json-path</artifactId>
-			<version>[4.4.0,)</version>
+			<!-- <version>[4.4.0,)</version> -->
 			<scope>test</scope>
 		</dependency>
 
